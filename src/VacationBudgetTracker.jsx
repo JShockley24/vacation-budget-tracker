@@ -70,6 +70,11 @@ export default function VacationBudgetTracker() {
   };
 
   const handleSaveExpense = () => {
+    if (!editingExpense || !editingExpense.date || !editingExpense.category || !editingExpense.amount) {
+      alert('Please fill out all fields before saving.');
+      return;
+    }
+
     const updatedExpenses = [...expenses];
     updatedExpenses[editingExpenseIndex] = editingExpense;
     setExpenses(updatedExpenses);
