@@ -27,6 +27,21 @@ export default function VacationBudgetTracker() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ startDate, endDate, budget, categories, expenses }));
   }, [startDate, endDate, budget, categories, expenses]);
 
+  const [showModal, setShowModal] = useState(false);
+
+  const confirmReset = () => {
+    setShowModal(true);
+  };
+
+  const cancelReset = () => {
+    setShowModal(false);
+  };
+
+  const handleConfirmReset = () => {
+    handleReset();
+    setShowModal(false);
+  };
+
   const handleAddExpense = () => {
     if (!newExpense.date || !newExpense.category || !newExpense.amount) return;
     setExpenses([...expenses, { ...newExpense, amount: parseFloat(newExpense.amount) }]);
@@ -113,8 +128,20 @@ export default function VacationBudgetTracker() {
         }} />
       </div>
       <div className="reset-button-container">
-        <button onClick={handleReset}>Reset</button>
+        <button onClick={confirmReset}>Reset</button>
       </div>
+
+      {showModal && (
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <h3>Are you sure you want to reset?</h3>
+          <p>This will delete all your vacation data from this device.</p>
+          <button onClick={handleConfirmReset}>Yes, Reset</button>
+          <button onClick={cancelReset}>Cancel</button>
+        </div>
+      </div>
+      )}
+
     </div>
   );
 }
