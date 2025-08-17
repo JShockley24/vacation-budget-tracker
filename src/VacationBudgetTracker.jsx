@@ -70,13 +70,16 @@ export default function VacationBudgetTracker() {
   };
 
   const handleSaveExpense = () => {
-    if (!editingExpense || !editingExpense.date || !editingExpense.category || !editingExpense.amount) {
-      alert('Please fill out all fields before saving.');
+    if (!editingExpense || !editingExpense.date || !editingExpense.category || editingExpense.amount === '' || isNaN(Number(editingExpense.amount))) {
+      alert('Please fill out all fields with valid values before saving.');
       return;
     }
 
     const updatedExpenses = [...expenses];
-    updatedExpenses[editingExpenseIndex] = editingExpense;
+    updatedExpenses[editingExpenseIndex] = {
+      ...editingExpense,
+      amount: parseFloat(editingExpense.amount)
+    };
     setExpenses(updatedExpenses);
     setEditingExpenseIndex(null);
     setEditingExpense(null);
@@ -152,7 +155,7 @@ export default function VacationBudgetTracker() {
                   onChange={(e) => setEditingExpense({ ...editingExpense, amount: e.target.value })}
                 />
                 <button onClick={handleSaveExpense}>Save</button>
-                <button onClick={() => setEditingExpenseIndex(null)}>Cancel</button>
+                <button onClick={() => { setEditingExpenseIndex(null); setEditingExpense(null); }}>Cancel</button>
               </>
             ) : (
               <>
