@@ -13,9 +13,6 @@ const defaultCategories = [
 const LOCAL_STORAGE_KEY = 'vacationBudgetTrackerData';
 
 export default function VacationBudgetTracker() {
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [budget, setBudget] = useState('');
   const [categories, setCategories] = useState([...defaultCategories]);
   const [expenses, setExpenses] = useState([]);
   const [newExpense, setNewExpense] = useState({ date: '', category: '', description: '', amount: '' });
@@ -26,17 +23,14 @@ export default function VacationBudgetTracker() {
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
     if (saved) {
-      setStartDate(saved.startDate || '');
-      setEndDate(saved.endDate || '');
-      setBudget(saved.budget || '');
       setCategories(saved.categories || [...defaultCategories]);
       setExpenses(saved.expenses || []);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ startDate, endDate, budget, categories, expenses }));
-  }, [startDate, endDate, budget, categories, expenses]);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ categories, expenses }));
+  }, [categories, expenses]);
 
   const confirmReset = () => {
     setShowModal(true);
@@ -58,9 +52,6 @@ export default function VacationBudgetTracker() {
   };
 
   const handleReset = () => {
-    setStartDate('');
-    setEndDate('');
-    setBudget('');
     setExpenses([]);
     setCategories([...defaultCategories]);
     localStorage.removeItem(LOCAL_STORAGE_KEY);
@@ -92,8 +83,9 @@ export default function VacationBudgetTracker() {
     setExpenses(updatedExpenses);
   };
 
+  const totalCategoryBudget = categories.reduce((sum, cat) => sum + parseFloat(cat.budget || 0), 0);
   const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
-  const remaining = parseFloat(budget || 0) - totalSpent;
+  const remaining = totalCategoryBudget - totalSpent;
   const chartData = categories.map(cat => ({
     name: cat.name,
     value: expenses.filter(e => e.category === cat.name).reduce((sum, e) => sum + e.amount, 0)
@@ -101,19 +93,9 @@ export default function VacationBudgetTracker() {
 
   const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7f50', '#a4de6c', '#d0ed57'];
 
-  const totalCategoryBudget = categories.reduce((sum, cat) => sum + parseFloat(cat.budget || 0), 0);
-
   return (
     <div style={{ padding: 20, maxWidth: 800, margin: '0 auto' }}>
       <h1>Vacation Budget Tracker</h1>
-      <div>
-        <label>Start Date:</label>
-        <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
-        <label>End Date:</label>
-        <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
-        <label>Total Budget (USD):</label>
-        <input type="number" value={budget} onChange={e => setBudget(e.target.value)} />
-      </div>
 
       <h2>Add Expense</h2>
       <div>
@@ -190,22 +172,28 @@ export default function VacationBudgetTracker() {
 
       <h2>Category Budgets</h2>
       <ul>
-        {categories.map((cat, i) => (
-          <li key={i}>
-            <strong>{cat.name}</strong>: 
-            <input
-              type="number"
-              placeholder="Budget"
-              value={cat.budget}
-              onChange={e => {
-                const updated = [...categories];
-                updated[i].budget = e.target.value;
-                setCategories(updated);
-              }}
-            />
-            | Spent: ${expenses.filter(e => e.category === cat.name).reduce((sum, e) => sum + e.amount, 0).toFixed(2)}
-          </li>
-        ))}
+        {categories.map((cat, i) => {
+          const spent = expenses.filter(e => e.category === cat.name).reduce((sum, e) => sum + e.amount, 0);
+          const catBudget = parseFloat(cat.budget || 0);
+          const catRemaining = catBudget - spent;
+          return (
+            <li key={i}>
+              <strong>{cat.name}</strong>: 
+              <input
+                type="number"
+                placeholder="Budget"
+                value={cat.budget}
+                onChange={e => {
+                  const updated = [...categories];
+                  updated[i].budget = e.target.value;
+                  setCategories(updated);
+                }}
+              />
+              | Spent: ${spent.toFixed(2)}
+              | Remaining: ${catRemaining.toFixed(2)}
+            </li>
+          );
+        })}
       </ul>
 
       <div className="reset-button-container">
