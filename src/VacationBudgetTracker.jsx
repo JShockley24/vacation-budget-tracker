@@ -128,7 +128,7 @@ export default function VacationBudgetTracker() {
         }} />
       </div>
       <div className="reset-button-container">
-        <button onClick={confirmReset}>Reset</button>
+        <button className="reset-button" onClick={confirmReset}>Reset</button>
       </div>
 
       {showModal && (
