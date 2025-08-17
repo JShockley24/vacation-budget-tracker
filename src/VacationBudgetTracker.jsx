@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 
-const defaultCategories = ['Lodging', 'Food', 'Transportation', 'Activities', 'Shopping', 'Misc'];
+const defaultCategories = ['Cruise', 'Lodging', 'Food', 'Transportation', 'Entertainment', 'Shopping', 'Misc'];
 const LOCAL_STORAGE_KEY = 'vacationBudgetTrackerData';
 
 export default function VacationBudgetTracker() {
