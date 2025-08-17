@@ -192,7 +192,7 @@ export default function VacationBudgetTracker() {
       <ul>
         {categories.map((cat, i) => (
           <li key={i}>
-            {cat.name}: 
+            <strong>{cat.name}</strong>: 
             <input
               type="number"
               placeholder="Budget"
