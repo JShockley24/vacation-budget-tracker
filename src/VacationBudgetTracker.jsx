@@ -171,21 +171,31 @@ export default function VacationBudgetTracker() {
       )}
 
       <h2>Category Spending</h2>
-      <ul>
-        {categories.map((cat, i) => {
-          const spent = expenses.filter(e => e.category === cat.name).reduce((sum, e) => sum + e.amount, 0);
-          const catBudget = parseFloat(cat.budget || 0);
-          const catRemaining = catBudget - spent;
-          return (
-            <li key={i}>
-              <strong>{cat.name}</strong>: 
-              Spent: ${spent.toFixed(2)}
-              | Budget: ${catBudget.toFixed(2)}
-              | Remaining: <span style={{ color: catRemaining < 0 ? 'red' : 'inherit' }}>${catRemaining.toFixed(2)}</span>
-            </li>
-          );
-        })}
-      </ul>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2em' }}>
+        <thead>
+          <tr>
+            <th style={{ textAlign: 'left', padding: '0.5em', borderBottom: '1px solid #ccc' }}>Category</th>
+            <th style={{ textAlign: 'left', padding: '0.5em', borderBottom: '1px solid #ccc' }}>Spent</th>
+            <th style={{ textAlign: 'left', padding: '0.5em', borderBottom: '1px solid #ccc' }}>Budget</th>
+            <th style={{ textAlign: 'left', padding: '0.5em', borderBottom: '1px solid #ccc' }}>Remaining</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categories.map((cat, i) => {
+            const spent = expenses.filter(e => e.category === cat.name).reduce((sum, e) => sum + e.amount, 0);
+            const catBudget = parseFloat(cat.budget || 0);
+            const catRemaining = catBudget - spent;
+            return (
+              <tr key={i}>
+                <td style={{ padding: '0.5em', borderBottom: '1px solid #eee' }}><strong>{cat.name}</strong></td>
+                <td style={{ padding: '0.5em', borderBottom: '1px solid #eee' }}>${spent.toFixed(2)}</td>
+                <td style={{ padding: '0.5em', borderBottom: '1px solid #eee' }}>${catBudget.toFixed(2)}</td>
+                <td style={{ padding: '0.5em', borderBottom: '1px solid #eee', color: catRemaining < 0 ? 'red' : 'inherit' }}>${catRemaining.toFixed(2)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
 
       <div style={{ marginTop: '2em', borderTop: '1px solid #ccc', paddingTop: '1em' }}>
         <h2>Set Category Budgets</h2>
