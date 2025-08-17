@@ -157,7 +157,7 @@ export default function VacationBudgetTracker() {
       <h2>Summary</h2>
       <p>Total Budget: ${totalCategoryBudget.toFixed(2)}</p>
       <p>Spent: ${totalSpent.toFixed(2)}</p>
-      <p>Remaining: ${remaining.toFixed(2)}</p>
+      <p>Remaining: <span style={{ color: remaining < 0 ? 'red' : 'inherit' }}>${remaining.toFixed(2)}</span></p>
 
       <h2>Spending Breakdown</h2>
       {chartData.length === 0 ? <p>No spending yet.</p> : (
