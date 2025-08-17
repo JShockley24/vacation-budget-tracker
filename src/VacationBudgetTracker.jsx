@@ -189,23 +189,34 @@ export default function VacationBudgetTracker() {
 
       <div style={{ marginTop: '2em', borderTop: '1px solid #ccc', paddingTop: '1em' }}>
         <h2>Set Category Budgets</h2>
-        <ul>
-          {categories.map((cat, i) => (
-            <li key={i}>
-              <strong>{cat.name}</strong>: 
-              <input
-                type="number"
-                placeholder="Budget"
-                value={cat.budget}
-                onChange={e => {
-                  const updated = [...categories];
-                  updated[i].budget = e.target.value;
-                  setCategories(updated);
-                }}
-              />
-            </li>
-          ))}
-        </ul>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={{ textAlign: 'left', padding: '0.5em', borderBottom: '1px solid #ccc' }}>Category</th>
+              <th style={{ textAlign: 'left', padding: '0.5em', borderBottom: '1px solid #ccc' }}>Budget</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categories.map((cat, i) => (
+              <tr key={i}>
+                <td style={{ padding: '0.5em', borderBottom: '1px solid #eee' }}><strong>{cat.name}</strong></td>
+                <td style={{ padding: '0.5em', borderBottom: '1px solid #eee' }}>
+                  <input
+                    type="number"
+                    placeholder="Budget"
+                    value={cat.budget}
+                    onChange={e => {
+                      const updated = [...categories];
+                      updated[i].budget = e.target.value;
+                      setCategories(updated);
+                    }}
+                    style={{ width: '100px' }}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <div className="reset-button-container">
