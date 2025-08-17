@@ -195,7 +195,7 @@ export default function VacationBudgetTracker() {
             );
           })}
           {/* Total row */}
-          <tr style={{ fontWeight: 'bold', background: '#f8f8f8' }}>
+          <tr style={{ fontWeight: 'bold' }}>
             <td style={{ padding: '0.5em', borderTop: '2px solid #ccc' }}>Total</td>
             <td style={{ padding: '0.5em', borderTop: '2px solid #ccc' }}>${categories.reduce((sum, cat) => sum + expenses.filter(e => e.category === cat.name).reduce((s, e) => s + e.amount, 0), 0).toFixed(2)}</td>
             <td style={{ padding: '0.5em', borderTop: '2px solid #ccc' }}>${categories.reduce((sum, cat) => sum + parseFloat(cat.budget || 0), 0).toFixed(2)}</td>
