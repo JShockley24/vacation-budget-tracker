@@ -170,13 +170,27 @@ export default function VacationBudgetTracker() {
         </PieChart>
       )}
 
-      <h2>Category Budgets</h2>
+      <h2>Category Spending</h2>
       <ul>
         {categories.map((cat, i) => {
           const spent = expenses.filter(e => e.category === cat.name).reduce((sum, e) => sum + e.amount, 0);
           const catBudget = parseFloat(cat.budget || 0);
           const catRemaining = catBudget - spent;
           return (
+            <li key={i}>
+              <strong>{cat.name}</strong>: 
+              Spent: ${spent.toFixed(2)}
+              | Budget: ${catBudget.toFixed(2)}
+              | Remaining: <span style={{ color: catRemaining < 0 ? 'red' : 'inherit' }}>${catRemaining.toFixed(2)}</span>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div style={{ marginTop: '2em', borderTop: '1px solid #ccc', paddingTop: '1em' }}>
+        <h2>Set Category Budgets</h2>
+        <ul>
+          {categories.map((cat, i) => (
             <li key={i}>
               <strong>{cat.name}</strong>: 
               <input
@@ -189,12 +203,10 @@ export default function VacationBudgetTracker() {
                   setCategories(updated);
                 }}
               />
-              | Spent: ${spent.toFixed(2)}
-              | Remaining: ${catRemaining.toFixed(2)}
             </li>
-          );
-        })}
-      </ul>
+          ))}
+        </ul>
+      </div>
 
       <div className="reset-button-container">
         <button className="reset-button" onClick={confirmReset}>Reset</button>
