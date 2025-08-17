@@ -67,7 +67,6 @@ export default function VacationBudgetTracker() {
         <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
         <label>Total Budget (USD):</label>
         <input type="number" value={budget} onChange={e => setBudget(e.target.value)} />
-        <button onClick={handleReset}>Reset</button>
       </div>
 
       <h2>Add Expense</h2>
@@ -112,6 +111,9 @@ export default function VacationBudgetTracker() {
             e.target.value = '';
           }
         }} />
+      </div>
+      <div className="reset-button-container">
+        <button onClick={handleReset}>Reset</button>
       </div>
     </div>
   );

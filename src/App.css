@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+
+.reset-button-container {
+  margin-top: 2rem;
+  text-align: center;
+}
