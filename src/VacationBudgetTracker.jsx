@@ -11,6 +11,9 @@ export default function VacationBudgetTracker() {
   const [categories, setCategories] = useState([...defaultCategories]);
   const [expenses, setExpenses] = useState([]);
   const [newExpense, setNewExpense] = useState({ date: '', category: '', description: '', amount: '' });
+  const [editingExpenseIndex, setEditingExpenseIndex] = useState(null);
+  const [editingExpense, setEditingExpense] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
@@ -26,8 +29,6 @@ export default function VacationBudgetTracker() {
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ startDate, endDate, budget, categories, expenses }));
   }, [startDate, endDate, budget, categories, expenses]);
-
-  const [showModal, setShowModal] = useState(false);
 
   const confirmReset = () => {
     setShowModal(true);
@@ -61,6 +62,24 @@ export default function VacationBudgetTracker() {
     setExpenses([]);
     setCategories([...defaultCategories]);
     localStorage.removeItem(LOCAL_STORAGE_KEY);
+  };
+
+  const handleEditExpense = (index) => {
+    setEditingExpenseIndex(index);
+    setEditingExpense({ ...expenses[index] });
+  };
+
+  const handleSaveExpense = () => {
+    const updatedExpenses = [...expenses];
+    updatedExpenses[editingExpenseIndex] = editingExpense;
+    setExpenses(updatedExpenses);
+    setEditingExpenseIndex(null);
+    setEditingExpense(null);
+  };
+
+  const handleDeleteExpense = (index) => {
+    const updatedExpenses = expenses.filter((_, i) => i !== index);
+    setExpenses(updatedExpenses);
   };
 
   const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
@@ -99,7 +118,45 @@ export default function VacationBudgetTracker() {
       <h2>Expenses</h2>
       <ul>
         {expenses.map((e, i) => (
-          <li key={i}>{e.date} | {e.category} | {e.description} - ${e.amount.toFixed(2)}</li>
+          <li key={i}>
+            {editingExpenseIndex === i ? (
+              <>
+                <input
+                  type="date"
+                  value={editingExpense.date}
+                  onChange={(e) => setEditingExpense({ ...editingExpense, date: e.target.value })}
+                />
+                <select
+                  value={editingExpense.category}
+                  onChange={(e) => setEditingExpense({ ...editingExpense, category: e.target.value })}
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((cat, idx) => (
+                    <option key={idx} value={cat}>{cat}</option>
+                  ))}
+                </select>
+                <input
+                  placeholder="Description"
+                  value={editingExpense.description}
+                  onChange={(e) => setEditingExpense({ ...editingExpense, description: e.target.value })}
+                />
+                <input
+                  type="number"
+                  placeholder="Amount"
+                  value={editingExpense.amount}
+                  onChange={(e) => setEditingExpense({ ...editingExpense, amount: e.target.value })}
+                />
+                <button onClick={handleSaveExpense}>Save</button>
+                <button onClick={() => setEditingExpenseIndex(null)}>Cancel</button>
+              </>
+            ) : (
+              <>
+                {e.date} | {e.category} | {e.description} - ${e.amount.toFixed(2)}
+                <button onClick={() => handleEditExpense(i)}>Edit</button>
+                <button onClick={() => handleDeleteExpense(i)}>Delete</button>
+              </>
+            )}
+          </li>
         ))}
       </ul>
 
