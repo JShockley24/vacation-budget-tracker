@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 
-const defaultCategories = ['Cruise', 'Lodging', 'Food', 'Transportation', 'Entertainment', 'Shopping', 'Misc'];
+const defaultCategories = [
+  { name: 'Cruise', budget: '' },
+  { name: 'Lodging', budget: '' },
+  { name: 'Food', budget: '' },
+  { name: 'Transportation', budget: '' },
+  { name: 'Entertainment', budget: '' },
+  { name: 'Shopping', budget: '' },
+  { name: 'Misc', budget: '' }
+];
 const LOCAL_STORAGE_KEY = 'vacationBudgetTrackerData';
 
 export default function VacationBudgetTracker() {
@@ -49,12 +57,6 @@ export default function VacationBudgetTracker() {
     setNewExpense({ date: '', category: '', description: '', amount: '' });
   };
 
-  const handleAddCategory = (newCat) => {
-    if (newCat && !categories.includes(newCat)) {
-      setCategories([...categories, newCat]);
-    }
-  };
-
   const handleReset = () => {
     setStartDate('');
     setEndDate('');
@@ -93,11 +95,13 @@ export default function VacationBudgetTracker() {
   const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
   const remaining = parseFloat(budget || 0) - totalSpent;
   const chartData = categories.map(cat => ({
-    name: cat,
-    value: expenses.filter(e => e.category === cat).reduce((sum, e) => sum + e.amount, 0)
+    name: cat.name,
+    value: expenses.filter(e => e.category === cat.name).reduce((sum, e) => sum + e.amount, 0)
   })).filter(item => item.value > 0);
 
   const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7f50', '#a4de6c', '#d0ed57'];
+
+  const totalCategoryBudget = categories.reduce((sum, cat) => sum + parseFloat(cat.budget || 0), 0);
 
   return (
     <div style={{ padding: 20, maxWidth: 800, margin: '0 auto' }}>
@@ -116,7 +120,7 @@ export default function VacationBudgetTracker() {
         <input type="date" value={newExpense.date} onChange={e => setNewExpense({ ...newExpense, date: e.target.value })} />
         <select value={newExpense.category} onChange={e => setNewExpense({ ...newExpense, category: e.target.value })}>
           <option value="">Select Category</option>
-          {categories.map((cat, i) => <option key={i} value={cat}>{cat}</option>)}
+          {categories.map((cat, i) => <option key={i} value={cat.name}>{cat.name}</option>)}
         </select>
         <input placeholder="Description" value={newExpense.description} onChange={e => setNewExpense({ ...newExpense, description: e.target.value })} />
         <input type="number" placeholder="Amount" value={newExpense.amount} onChange={e => setNewExpense({ ...newExpense, amount: e.target.value })} />
@@ -140,7 +144,7 @@ export default function VacationBudgetTracker() {
                 >
                   <option value="">Select Category</option>
                   {categories.map((cat, idx) => (
-                    <option key={idx} value={cat}>{cat}</option>
+                    <option key={idx} value={cat.name}>{cat.name}</option>
                   ))}
                 </select>
                 <input
@@ -169,7 +173,7 @@ export default function VacationBudgetTracker() {
       </ul>
 
       <h2>Summary</h2>
-      <p>Total Budget: ${parseFloat(budget || 0).toFixed(2)}</p>
+      <p>Total Budget: ${totalCategoryBudget.toFixed(2)}</p>
       <p>Spent: ${totalSpent.toFixed(2)}</p>
       <p>Remaining: ${remaining.toFixed(2)}</p>
 
@@ -184,14 +188,26 @@ export default function VacationBudgetTracker() {
         </PieChart>
       )}
 
-      <div>
-        <input placeholder="Add Category" onKeyDown={e => {
-          if (e.key === 'Enter') {
-            handleAddCategory(e.target.value);
-            e.target.value = '';
-          }
-        }} />
-      </div>
+      <h2>Category Budgets</h2>
+      <ul>
+        {categories.map((cat, i) => (
+          <li key={i}>
+            {cat.name}: 
+            <input
+              type="number"
+              placeholder="Budget"
+              value={cat.budget}
+              onChange={e => {
+                const updated = [...categories];
+                updated[i].budget = e.target.value;
+                setCategories(updated);
+              }}
+            />
+            | Spent: ${expenses.filter(e => e.category === cat.name).reduce((sum, e) => sum + e.amount, 0).toFixed(2)}
+          </li>
+        ))}
+      </ul>
+
       <div className="reset-button-container">
         <button className="reset-button" onClick={confirmReset}>Reset</button>
       </div>
