@@ -185,12 +185,15 @@ export default function VacationBudgetTracker() {
             const spent = expenses.filter(e => e.category === cat.name).reduce((sum, e) => sum + e.amount, 0);
             const catBudget = parseFloat(cat.budget || 0);
             const catRemaining = catBudget - spent;
+            let color = 'inherit';
+            if (catRemaining < 0) color = 'red';
+            else if (catBudget > 0 && catRemaining < catBudget * 0.1) color = 'goldenrod';
             return (
               <tr key={i}>
                 <td style={{ padding: '0.5em', borderBottom: '1px solid #eee' }}><strong>{cat.name}</strong></td>
                 <td style={{ padding: '0.5em', borderBottom: '1px solid #eee' }}>${spent.toFixed(2)}</td>
                 <td style={{ padding: '0.5em', borderBottom: '1px solid #eee' }}>${catBudget.toFixed(2)}</td>
-                <td style={{ padding: '0.5em', borderBottom: '1px solid #eee', color: catRemaining < 0 ? 'red' : 'inherit' }}>${catRemaining.toFixed(2)}</td>
+                <td style={{ padding: '0.5em', borderBottom: '1px solid #eee', color }}>{catRemaining.toFixed(2)}</td>
               </tr>
             );
           })}
@@ -199,7 +202,7 @@ export default function VacationBudgetTracker() {
             <td style={{ padding: '0.5em', borderTop: '2px solid #ccc' }}>Total</td>
             <td style={{ padding: '0.5em', borderTop: '2px solid #ccc' }}>${categories.reduce((sum, cat) => sum + expenses.filter(e => e.category === cat.name).reduce((s, e) => s + e.amount, 0), 0).toFixed(2)}</td>
             <td style={{ padding: '0.5em', borderTop: '2px solid #ccc' }}>${categories.reduce((sum, cat) => sum + parseFloat(cat.budget || 0), 0).toFixed(2)}</td>
-            <td style={{ padding: '0.5em', borderTop: '2px solid #ccc', color: (categories.reduce((sum, cat) => sum + parseFloat(cat.budget || 0), 0) - categories.reduce((sum, cat) => sum + expenses.filter(e => e.category === cat.name).reduce((s, e) => s + e.amount, 0), 0)) < 0 ? 'red' : 'inherit' }}>${(categories.reduce((sum, cat) => sum + parseFloat(cat.budget || 0), 0) - categories.reduce((sum, cat) => sum + expenses.filter(e => e.category === cat.name).reduce((s, e) => s + e.amount, 0), 0)).toFixed(2)}</td>
+            <td style={{ padding: '0.5em', borderTop: '2px solid #ccc', color: remaining < 0 ? 'red' : (remaining < totalCategoryBudget * 0.1 ? 'goldenrod' : 'inherit') }}>${remaining.toFixed(2)}</td>
           </tr>
         </tbody>
       </table>
